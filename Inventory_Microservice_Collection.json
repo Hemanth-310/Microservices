@@ -1,0 +1,520 @@
+{
+  "info": {
+    "name": "Inventory Microservice",
+    "description": "Complete API collection for Inventory Management System with JWT Authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url_auth",
+      "value": "http://127.0.0.1:8003",
+      "type": "string"
+    },
+    {
+      "key": "base_url_upload",
+      "value": "http://127.0.0.1:8001",
+      "type": "string"
+    },
+    {
+      "key": "base_url_inventory",
+      "value": "http://127.0.0.1:8002",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "testuser@example.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "testpass123",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. AUTHENTICATION (Service 3 - Port 8003)",
+      "item": [
+        {
+          "name": "Health Check - Auth Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_auth}}/health",
+              "host": ["{{base_url_auth}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Create New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"name\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_auth}}/signup",
+              "host": ["{{base_url_auth}}"],
+              "path": ["signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Get JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "    console.log(\"Token saved:\", jsonData.access_token);",
+                  "}",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Token received\", function () {",
+                  "    pm.expect(jsonData.access_token).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_auth}}/login",
+              "host": ["{{base_url_auth}}"],
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_auth}}/verify",
+              "host": ["{{base_url_auth}}"],
+              "path": ["verify"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User (Testing Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_auth}}/user/{{email}}",
+              "host": ["{{base_url_auth}}"],
+              "path": ["user", "{{email}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. UPLOAD SERVICE (Service 1 - Port 8001)",
+      "item": [
+        {
+          "name": "Health Check - Upload Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_upload}}/health",
+              "host": ["{{base_url_upload}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload CSV File (Requires Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/Users/hemanth/inventory-microservice/sample.csv"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url_upload}}/upload",
+              "host": ["{{base_url_upload}}"],
+              "path": ["upload"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. INVENTORY SERVICE (Service 2 - Port 8002)",
+      "item": [
+        {
+          "name": "Health Check - Inventory Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_inventory}}/health",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - All Restock Items (Stock < 10)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Restock Items by Region (Europe)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock?region=Europe",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "Europe"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Restock Items by Region (North America)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock?region=North%20America",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "North America"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Restock Items with Custom Threshold (Stock < 20)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock?threshold=20",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Filter by Product (Mouse)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock?product=Mouse",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"],
+              "query": [
+                {
+                  "key": "product",
+                  "value": "Mouse"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Multiple Filters (Europe & Stock < 15)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock?region=Europe&threshold=15",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock"],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "Europe"
+                },
+                {
+                  "key": "threshold",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - My Uploaded Items Only",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock/my-items",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock", "my-items"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - My Items with Custom Threshold",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/restock/my-items?threshold=20",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["restock", "my-items"],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Single Item by Product Name",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/items/Webcam",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["items", "Webcam"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Single Item with Location Filter",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/items/Wireless%20Mouse?location=Chicago&region=North%20America",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["items", "Wireless Mouse"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Chicago"
+                },
+                {
+                  "key": "region",
+                  "value": "North America"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Multiple Items by Region",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/items?region=Europe",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "Europe"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Multiple Items by Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/items?product=Wireless%20Mouse",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "product",
+                  "value": "Wireless Mouse"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - All My Items",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url_inventory}}/items/all/my",
+              "host": ["{{base_url_inventory}}"],
+              "path": ["items", "all", "my"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
