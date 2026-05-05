@@ -151,28 +151,28 @@ python app.py
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/auth/register` | Register new user |
-| POST | `/auth/login` | Login and get JWT token |
-| POST | `/auth/verify` | Verify JWT token |
-| GET | `/auth/health` | Health check |
+| POST | `/signup` | Register new user |
+| POST | `/login` | Login and get JWT token |
+| POST | `/verify` | Verify JWT token |
+| GET | `/health` | Health check |
 
 ### 2️⃣ Upload Service (`port 8001`)
 
 | Method | Endpoint | Description | Authentication |
 |--------|----------|-------------|----------------|
-| POST | `/upload/csv` | Upload CSV file with inventory data | JWT Required |
-| GET | `/upload/health` | Health check | None |
+| POST | `/csv` | Upload CSV file with inventory data | JWT Required |
+| GET | `/health` | Health check | None |
 
 ### 3️⃣ Inventory Service (`port 8002`)
 
 | Method | Endpoint | Description | Authentication |
 |--------|----------|-------------|----------------|
-| GET | `/inventory/items` | Get all inventory items | JWT Required |
-| GET | `/inventory/items/{id}` | Get specific item by ID | JWT Required |
-| POST | `/inventory/items` | Add new inventory item | JWT Required |
-| PUT | `/inventory/items/{id}` | Update existing item | JWT Required |
-| DELETE | `/inventory/items/{id}` | Delete item | JWT Required |
-| GET | `/inventory/health` | Health check | None |
+| GET | `/items` | Get all inventory items | JWT Required |
+| GET | `/items/{id}` | Get specific item by ID | JWT Required |
+| POST | `/items` | Add new inventory item | JWT Required |
+| PUT | `/items/{id}` | Update existing item | JWT Required |
+| DELETE | `/items/{id}` | Delete item | JWT Required |
+| GET | `/health` | Health check | None |
 
 * * *
 
