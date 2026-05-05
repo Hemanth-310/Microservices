@@ -1,0 +1,11 @@
+Region,Product,Location,order_qty,curr_inv,supp_qty,on_hand_qty
+North America,Wireless Mouse,Chicago,100,3,200,3
+North America,Wireless Mouse,Dallas,150,8,200,8
+Europe,Mechanical Keyboard,Berlin,50,0,100,0
+Europe,USB Cable,Paris,500,25,1000,25
+Asia,Monitor Stand,Tokyo,200,12,300,12
+North America,Laptop Bag,New York,75,45,150,45
+Europe,Gaming Mouse,London,80,2,100,2
+Asia,Desk Lamp,Shanghai,300,18,500,18
+North America,Webcam,Seattle,40,1,80,1
+Europe,USB Hub,Munich,120,6,200,6
