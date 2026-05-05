@@ -153,27 +153,27 @@ python app.py
 |--------|----------|-------------|
 | POST | `/signup` | Register new user |
 | POST | `/login` | Login and get JWT token |
-| POST | `/verify` | Verify JWT token |
+| GET | `/verify` | Verify JWT token |
 | GET | `/health` | Health check |
 
 ### 2️⃣ Upload Service (`port 8001`)
 
 | Method | Endpoint | Description | Authentication |
 |--------|----------|-------------|----------------|
-| POST | `/csv` | Upload CSV file with inventory data | JWT Required |
+| POST | `/upload` | Upload CSV file with inventory data | JWT Required |
 | GET | `/health` | Health check | None |
 
 ### 3️⃣ Inventory Service (`port 8002`)
 
 | Method | Endpoint | Description | Authentication |
 |--------|----------|-------------|----------------|
-| GET | `/items` | Get all inventory items | JWT Required |
-| GET | `/items/{id}` | Get specific item by ID | JWT Required |
-| POST | `/items` | Add new inventory item | JWT Required |
-| PUT | `/items/{id}` | Update existing item | JWT Required |
-| DELETE | `/items/{id}` | Delete item | JWT Required |
+| GET | `/restock` | Get all items with stock < 10 | JWT Required |
+| GET | `/restock/my-items` | View only items uploaded by you | JWT Required |
+| DELETE | `/items/{product_name}` | Delete single item by product name | JWT Required |
+| DELETE | `/items?region={region}` | Delete all items in a region | JWT Required |
+| DELETE | `/items?product={name}` | Delete all items with specific product | JWT Required |
+| DELETE | `/items/all/my` | Delete all items uploaded by you | JWT Required |
 | GET | `/health` | Health check | None |
-
 * * *
 
 ## 📦 Sample CSV Format
@@ -377,18 +377,6 @@ kill -9 <PID>
 
 * * *
 
-
 ## 👥 Author
 
 **Hemanth**
-
-
----
-
-## 📊 Repository Activity
-
-![GitHub last commit](https://img.shields.io/github/last-commit/Hemanth-310/Microservices)
-![GitHub repo size](https://img.shields.io/github/repo-size/Hemanth-310/Microservices)
-![GitHub stars](https://img.shields.io/github/stars/Hemanth-310/Microservices?style=social)
-
----
